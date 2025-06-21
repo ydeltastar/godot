@@ -548,17 +548,19 @@ void RemoteDebugger::debug(bool p_can_continue, bool p_is_error_breakpoint) {
 				PackedStringArray input_names;
 				Array input_vals;
 
-				List<String> locals;
-				List<Variant> local_vals;
-				script_debugger->get_break_language()->debug_get_stack_level_locals(frame, &locals, &local_vals);
-				ERR_FAIL_COND(locals.size() != local_vals.size());
+				if (frame > -1) {
+					List<String> locals;
+					List<Variant> local_vals;
+					script_debugger->get_break_language()->debug_get_stack_level_locals(frame, &locals, &local_vals);
+					ERR_FAIL_COND(locals.size() != local_vals.size());
 
-				for (const String &S : locals) {
-					input_names.append(S);
-				}
+					for (const String &S : locals) {
+						input_names.append(S);
+					}
 
-				for (const Variant &V : local_vals) {
-					input_vals.append(V);
+					for (const Variant &V : local_vals) {
+						input_vals.append(V);
+					}
 				}
 
 				List<String> globals;
@@ -596,7 +598,10 @@ void RemoteDebugger::debug(bool p_can_continue, bool p_is_error_breakpoint) {
 					input_vals.append(scr);
 				}
 
-				ScriptInstance *breaked_instance = script_lang->debug_get_stack_level_instance(frame);
+				ScriptInstance *breaked_instance = nullptr;
+				if (frame > -1) {
+					breaked_instance = script_lang->debug_get_stack_level_instance(frame);
+				}
 
 				Expression expression;
 				expression.parse(expression_str, input_names);
