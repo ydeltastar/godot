@@ -181,7 +181,7 @@ RID SVGTexture::_ensure_scale(double p_scale) const {
 	ERR_FAIL_NULL_V_MSG(sl, RID(), "Invalid scaling level");
 	sl->textures.insert(const_cast<SVGTexture *>(this));
 
-	RID new_rid = _load_at_scale(scale, false);
+	RID new_rid = _load_at_scale(scale, base_size == Size2(0, 0));
 	texture_cache[scale] = new_rid;
 	return new_rid;
 }
